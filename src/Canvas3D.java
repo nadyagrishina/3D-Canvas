@@ -22,16 +22,16 @@ import java.awt.event.*;
  */
 
 public class Canvas3D {
-    private JPanel panel;
-    private RasterBufferedImage raster;
-    private LineRasterizer lineRasterizer;
-    private WiredRenderer wiredRenderer;
+    private final JPanel panel;
+    private final RasterBufferedImage raster;
+    private final LineRasterizer lineRasterizer;
+    private final WiredRenderer wiredRenderer;
     private Solid cube;
 
     private Camera camera;
     private Mat4 projection;
 
-    private double translX = 0;
+    private final double translX = 0;
 
     public Canvas3D(int width, int height) {
         JFrame frame = new JFrame();
