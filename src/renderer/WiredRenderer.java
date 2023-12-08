@@ -1,6 +1,5 @@
 package renderer;
 
-import model.Point;
 import rasterize.LineRasterizer;
 import solids.Solid;
 import transforms.Mat4;
@@ -12,7 +11,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class WiredRenderer {
-    private LineRasterizer lineRasterizer;
+    private final LineRasterizer lineRasterizer;
     private Mat4 view;
     private Mat4 proj;
 
@@ -36,9 +35,12 @@ public class WiredRenderer {
             a = a.mul(solid.getModel()).mul(view).mul(proj);
             b = b.mul(solid.getModel()).mul(view).mul(proj);
 
-            // TODO: ořezání
-            
-            // TODO: dehomogenizace
+            if (clipLine(a, b)) {
+                continue;
+            }
+
+            a = dehomogenize(a);
+            b = dehomogenize(b);
 
             Vec3D v1 = new Vec3D(a);
             Vec3D v2 = new Vec3D(b);
@@ -51,6 +53,24 @@ public class WiredRenderer {
                     (int)Math.round(v2.getX()), (int)Math.round(v2.getY()),
                     Color.RED);
         }
+    }
+
+    private boolean clipLine(Point3D a, Point3D b) {
+        double xMin = -1.0;
+        double xMax = 1.0;
+        double yMin = -1.0;
+        double yMax = 1.0;
+
+        return (a.getX() < xMin && b.getX() < xMin) || (a.getX() > xMax && b.getX() > xMax) ||
+                (a.getY() < yMin && b.getY() < yMin) || (a.getY() > yMax && b.getY() > yMax);
+    }
+
+    private Point3D dehomogenize(Point3D point) {
+        double x = point.getX();
+        double y = point.getY();
+        double z = point.getZ();
+        double w = point.getW();
+        return new Point3D(x / w, y / w, z / w);
     }
 
     public Vec3D transformToWindow(Vec3D p) {
