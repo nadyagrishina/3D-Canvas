@@ -1,5 +1,6 @@
 package transforms;
 
+import java.awt.*;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 public class Point3D {
 	private final double x, y, z, w;
+	private final Color color = Color.GREEN;
 
 	/**
 	 * Creates a homogeneous point representing the origin 

@@ -13,10 +13,10 @@ import java.util.Locale;
  * @version 2016
  */
 public class Camera {
-	private final double azimuth, radius, zenith;
-	private final boolean firstPerson; // true -> 1st person, false -> 3rd person
-	private final Vec3D eye, pos, viewVector;
-	private final Mat4 view;
+	double azimuth, radius, zenith;
+	boolean firstPerson;
+	Vec3D eye, viewVector, pos;
+	Mat4 view;
 
 	/**
 	 * Creates 1st person camera with observer positioned in the origin and
@@ -393,7 +393,6 @@ public class Camera {
 	public Camera withZenith(final double ang) {
 		return new Camera(this, azimuth, ang);
 	}
-
 	/**
 	 * Returns String representation of this camera with floating point values formatted with the given format
 	 *
