@@ -10,6 +10,7 @@ import java.util.Arrays;
 public class Solid {
     protected ArrayList<Point3D> vb = new ArrayList<>();
     protected ArrayList<Integer> ib = new ArrayList<>();
+
     protected Mat4 model = new Mat4Identity();
 
     public ArrayList<Point3D> getVb() {

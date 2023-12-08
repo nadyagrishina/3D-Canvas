@@ -7,6 +7,8 @@ import rasterize.PolygonRasterizer;
 import rasterize.RasterBufferedImage;
 import renderer.WiredRenderer;
 import solids.Cube;
+import solids.Icosahedron;
+import solids.Pyramid;
 import solids.Solid;
 import transforms.*;
 
@@ -24,10 +26,11 @@ import java.awt.event.*;
 public class Canvas3D {
     private final JPanel panel;
     private final RasterBufferedImage raster;
-    private final LineRasterizer lineRasterizer;
+    private final LineRasterizerGraphics lineRasterizer;
     private final WiredRenderer wiredRenderer;
     private Solid cube;
-
+    private Solid pyramid;
+    private Solid icosahedron;
     private Camera camera;
     private Mat4 projection;
 
@@ -76,29 +79,28 @@ public class Canvas3D {
                     camera = camera.forward(0.1);
                 if(e.getKeyCode() == KeyEvent.VK_DOWN)
                     camera = camera.backward(0.1);
-
                 renderScene();
             }
         });
     }
-
     public void initScene() {
         camera = new Camera(
                 new Vec3D(0.5,-1,0.3),
                 Math.toRadians(90),
-                Math.toRadians(-15),
+                Math.toRadians(15),
                 1. ,
                 true
         );
         projection = new Mat4PerspRH(
-                Math.PI / 4,
+                Math.PI / 3,
                 600 / 800.,
                 0.1,
                 20.
         );
 
-
         cube = new Cube();
+        pyramid = new Pyramid();
+        icosahedron = new Icosahedron();
     }
 
     public void renderScene() {
@@ -106,7 +108,7 @@ public class Canvas3D {
 
         wiredRenderer.setView(camera.getViewMatrix());
         wiredRenderer.setProj(projection);
-        wiredRenderer.render(cube);
+        wiredRenderer.render(cube, Color.GREEN);
 
         panel.repaint();
     }

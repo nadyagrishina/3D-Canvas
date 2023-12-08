@@ -21,7 +21,7 @@ public class Canvas {
     private JPanel panel;
     private RasterBufferedImage raster;
 
-    private LineRasterizer lineRasterizer;
+    private LineRasterizerGraphics lineRasterizer;
     private PolygonRasterizer polygonRasterizer;
 
     private Polygon polygon;
@@ -74,7 +74,7 @@ public class Canvas {
                 scanLineFiller.fill();
                  */
 
-                polygonRasterizer.rasterize(polygon);
+                polygonRasterizer.rasterize(polygon, Color.RED);
 
                 if(e.getButton() == MouseEvent.BUTTON3) {
                     SeedFiller seedFiller = new SeedFiller(raster,

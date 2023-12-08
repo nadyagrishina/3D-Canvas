@@ -1,6 +1,7 @@
 package renderer;
 
 import rasterize.LineRasterizer;
+import rasterize.LineRasterizerGraphics;
 import solids.Solid;
 import transforms.Mat4;
 import transforms.Mat4Identity;
@@ -11,16 +12,16 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class WiredRenderer {
-    private final LineRasterizer lineRasterizer;
+    private final LineRasterizerGraphics lineRasterizer;
     private Mat4 view;
     private Mat4 proj;
 
-    public WiredRenderer(LineRasterizer lineRasterizer) {
+    public WiredRenderer(LineRasterizerGraphics lineRasterizer) {
         this.lineRasterizer = lineRasterizer;
         this.view = new Mat4Identity();
     }
 
-    public void render(Solid solid) {
+    public void render(Solid solid, Color color) {
         // Solid má index buffer, projdu ho v cyklu
         // pro každé dva prvky si načtu odpovídající vertex
         // spojím vertexy linou
@@ -51,7 +52,7 @@ public class WiredRenderer {
             lineRasterizer.rasterize(
                     (int)Math.round(v1.getX()), (int)Math.round(v1.getY()),
                     (int)Math.round(v2.getX()), (int)Math.round(v2.getY()),
-                    Color.RED);
+                    color);
         }
     }
 
@@ -79,9 +80,9 @@ public class WiredRenderer {
                 .mul(new Vec3D((800 - 1) / 2., (600 - 1) / 2., 1));
     }
 
-    public void renderScene(ArrayList<Solid> scene) {
+    public void renderScene(ArrayList<Solid> scene, Color color) {
         for (Solid solid : scene)
-            render(solid);
+            render(solid, color);
     }
 
     public void setView(Mat4 view) {

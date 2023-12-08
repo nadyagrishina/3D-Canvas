@@ -207,7 +207,7 @@ public class Point3D {
 	 * Returns the result of multiplication by the given 4x4 matrix thus
 	 * applying the transformation contained within
 	 * 
-	 * @param m
+	 * @param mat
 	 *            4x4 matrix
 	 * @return new Point3D instance
 	 */
@@ -293,11 +293,11 @@ public class Point3D {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return (this == obj) || (obj != null) && (obj instanceof Point3D) 
-				&& (new Double(((Point3D) obj).getX()).equals(getX()))
-				&& (new Double(((Point3D) obj).getY()).equals(getY()))
-				&& (new Double(((Point3D) obj).getZ()).equals(getZ()))
-				&& (new Double(((Point3D) obj).getW()).equals(getW()));
+		return (this == obj) || (obj instanceof Point3D)
+				&& Double.valueOf(((Point3D) obj).getX()).equals(Double.valueOf(getX()))
+				&& Double.valueOf(((Point3D) obj).getY()).equals(Double.valueOf(getY()))
+				&& Double.valueOf(((Point3D) obj).getZ()).equals(Double.valueOf(getZ()))
+				&& Double.valueOf(((Point3D) obj).getW()).equals(Double.valueOf(getW()));
 	}
 
 	/**
