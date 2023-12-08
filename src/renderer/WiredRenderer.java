@@ -20,7 +20,6 @@ public class WiredRenderer {
         this.lineRasterizer = lineRasterizer;
         this.view = new Mat4Identity();
     }
-
     public void render(Solid solid, Color color) {
         // Solid má index buffer, projdu ho v cyklu
         // pro každé dva prvky si načtu odpovídající vertex
@@ -55,15 +54,16 @@ public class WiredRenderer {
                     color);
         }
     }
-
     private boolean clipLine(Point3D a, Point3D b) {
         double xMin = -1.0;
         double xMax = 1.0;
         double yMin = -1.0;
         double yMax = 1.0;
-
-        return (a.getX() < xMin && b.getX() < xMin) || (a.getX() > xMax && b.getX() > xMax) ||
-                (a.getY() < yMin && b.getY() < yMin) || (a.getY() > yMax && b.getY() > yMax);
+        double zMin = 0.0;
+        double zMax = 1.0;
+        return !(Math.min(a.getX(), b.getX()) < xMin || Math.max(a.getX(), b.getX()) > xMax
+                || Math.min(a.getY(), b.getY()) < yMin || Math.max(a.getY(), b.getY()) > yMax
+                || Math.min(a.getZ(), b.getZ()) < zMin || Math.max(a.getZ(), b.getZ()) > zMax);
     }
 
     private Point3D dehomogenize(Point3D point) {
