@@ -1,6 +1,5 @@
 package renderer;
 
-import rasterize.LineRasterizer;
 import rasterize.LineRasterizerGraphics;
 import solids.Solid;
 import transforms.Mat4;
