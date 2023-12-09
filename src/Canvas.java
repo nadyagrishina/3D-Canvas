@@ -39,7 +39,6 @@ public class Canvas {
 
         raster = new RasterBufferedImage(width, height);
         lineRasterizer = new LineRasterizerGraphics(raster);
-        //lineRasterizer = new LineRasterizerTrivial(raster);
         polygonRasterizer = new PolygonRasterizer(lineRasterizer);
 
         polygon = new Polygon();
@@ -87,17 +86,17 @@ public class Canvas {
             }
         });
 
-//        panel.addMouseMotionListener(new MouseMotionAdapter() {
-//            @Override
-//            public void mouseDragged(MouseEvent e) {
-//                raster.clear();
-//                Point p1 = new Point(width / 2, height / 2);
-//                Point p2 = new Point(e.getX(), e.getY());
-//                Line line = new Line(p1, p2, 0xffff00);
-//                lineRasterizer.rasterize(line);
-//                panel.repaint();
-//            }
-//        });
+        panel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                raster.clear();
+                Point p1 = new Point(width / 2, height / 2);
+                Point p2 = new Point(e.getX(), e.getY());
+                Line line = new Line(p1, p2, 0xffff00);
+                lineRasterizer.rasterize(line, Color.RED);
+                panel.repaint();
+            }
+        });
 
         panel.addComponentListener(new ComponentAdapter() {
             @Override
