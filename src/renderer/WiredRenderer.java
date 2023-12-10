@@ -6,9 +6,9 @@ import transforms.Mat4;
 import transforms.Mat4Identity;
 import transforms.Point3D;
 import transforms.Vec3D;
+import solids.ColoredAxes;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class WiredRenderer {
     private final LineRasterizerGraphics lineRasterizer;
@@ -78,12 +78,6 @@ public class WiredRenderer {
                 .add(new Vec3D(1, 1, 0))
                 .mul(new Vec3D((800 - 1) / 2., (600 - 1) / 2., 1));
     }
-
-    public void renderScene(ArrayList<Solid> scene, Color color) {
-        for (Solid solid : scene)
-            render(solid, color);
-    }
-
     public void setView(Mat4 view) {
         this.view = view;
     }
@@ -91,4 +85,32 @@ public class WiredRenderer {
     public void setProj(Mat4 proj) {
         this.proj = proj;
     }
+    public void renderAxes() {
+        ColoredAxes coloredAxes = new ColoredAxes(this);
+        coloredAxes.render();
+    }
+    public void renderLine(Point3D start, Point3D end, Color color) {
+        start = start.mul(view).mul(proj);
+        end = end.mul(view).mul(proj);
+
+        if (clipLine(start, end)) {
+            return;
+        }
+
+        start = dehomogenize(start);
+        end = dehomogenize(end);
+
+        Vec3D v1 = new Vec3D(start);
+        Vec3D v2 = new Vec3D(end);
+
+        v1 = transformToWindow(v1);
+        v2 = transformToWindow(v2);
+
+        lineRasterizer.rasterize(
+                (int) Math.round(v1.getX()), (int) Math.round(v1.getY()),
+                (int) Math.round(v2.getX()), (int) Math.round(v2.getY()),
+                color);
+
+    }
 }
+
