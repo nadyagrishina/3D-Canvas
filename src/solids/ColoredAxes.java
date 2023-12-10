@@ -12,9 +12,9 @@ public class ColoredAxes {
     }
 
     public void render() {
-        renderAxis(new Vec3D(1, 0, 0), Color.decode("#00FF00"));
-        renderAxis(new Vec3D(0, 1, 0), Color.decode("#FF0033"));
-        renderAxis(new Vec3D(0, 0, 1), Color.decode("#0033FF"));
+        renderAxis(new Vec3D(1, 0, 0), Color.decode("#00FF00")); //x green
+        renderAxis(new Vec3D(0, 1, 0), Color.decode("#FF0033")); //y red
+        renderAxis(new Vec3D(0, 0, 1), Color.decode("#0033FF")); //z blue
     }
 
     private void renderAxis(Vec3D direction, Color color) {
