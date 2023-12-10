@@ -21,7 +21,7 @@ public class Canvas3D {
     private Solid pyramid;
     private Solid octahedron;
     private Camera camera;
-    private Mat4 projection;
+    private Mat4 projectionMatrix;
     private Mat4 translPyramid = new Mat4Identity();
     private Mat4 scalePyramid = new Mat4Identity();
     private Mat4 rotatePyramid = new Mat4Identity();
@@ -34,8 +34,9 @@ public class Canvas3D {
     private int oldY = 0;
     private Solid activeSolid;
     private boolean isPyramidSelected = true;
-    private boolean isOctahedronSelected = false;
-    private boolean isBothSelected = false;
+    private boolean isOctahedronSelected = true;
+    private boolean isBothSelected = true;
+    private boolean isOrthographicProjection = false;
 
     public Canvas3D(int width, int height) {
         JFrame frame = new JFrame();
@@ -107,15 +108,19 @@ public class Canvas3D {
                 transformMode = Mode.ROTATION;
                 checkSelection();
             }
-            case KeyEvent.VK_A -> camera = camera.left(0.1);
-            case KeyEvent.VK_D -> camera = camera.right(0.1);
-            case KeyEvent.VK_W -> camera = camera.forward(0.1);
-            case KeyEvent.VK_S -> camera = camera.backward(0.1);
-            case KeyEvent.VK_Q -> camera = camera.up(0.1);
-            case KeyEvent.VK_E -> camera = camera.down(0.1);
-            case KeyEvent.VK_O -> camera = camera.addZenith(0.1);
-            case KeyEvent.VK_L -> camera = camera.addZenith(-0.1);
+            case KeyEvent.VK_A -> camera = camera.left(0.3);
+            case KeyEvent.VK_D -> camera = camera.right(0.3);
+            case KeyEvent.VK_W -> camera = camera.forward(0.3);
+            case KeyEvent.VK_S -> camera = camera.backward(0.3);
+            case KeyEvent.VK_Q -> camera = camera.up(0.3);
+            case KeyEvent.VK_E -> camera = camera.down(0.3);
+            case KeyEvent.VK_O -> camera = camera.addZenith(0.3);
+            case KeyEvent.VK_L -> camera = camera.addZenith(-0.3);
             case KeyEvent.VK_P -> toggleSelectedSolid();
+            case KeyEvent.VK_SHIFT -> {
+                toggleProjection();
+                initScene();
+            }
         }
         renderScene();
     }
@@ -176,12 +181,11 @@ public class Canvas3D {
                 Math.toRadians(-15),
                 1. ,
                 true);
-        projection = new Mat4PerspRH(
-                Math.PI / 4,
-                600 / 800.,
-                0.1,
-                20
-        );
+
+        projectionMatrix = isOrthographicProjection ?
+                new Mat4OrthoRH(800,600, 0.1, 20) :
+                new Mat4PerspRH(Math.PI / 4, 600 / 800., 0.1, 20);
+
 
         pyramid = new Pyramid();
         octahedron = new Octahedron();
@@ -191,10 +195,8 @@ public class Canvas3D {
 
     private void renderScene() {
         clear();
-
         wiredRenderer.setView(camera.getViewMatrix());
-        wiredRenderer.setProj(projection);
-
+        wiredRenderer.setProj(projectionMatrix);
         if (isBothSelected){
             Mat4 modelMatrixPyramid = translPyramid.mul(scalePyramid).mul(rotatePyramid);
             Mat4 modelMatrixOctahedron = translOctahedron.mul(scaleOctahedron).mul(rotateOctahedron);
@@ -237,6 +239,9 @@ public class Canvas3D {
     public void setActiveSolid(Solid solid) {
         activeSolid = solid;
     }
+    private void checkSelection() {
+        isBothSelected = isPyramidSelected && isOctahedronSelected;
+    }
     private void toggleSelectedSolid() {
         if (isBothSelected) {
             isBothSelected = false;
@@ -254,10 +259,9 @@ public class Canvas3D {
             activeSolid = pyramid;
         }
     }
-    private void checkSelection() {
-        isBothSelected = isPyramidSelected && isOctahedronSelected;
+    private void toggleProjection(){
+        isOrthographicProjection = !isOrthographicProjection;
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Canvas3D(800, 600));
     }
