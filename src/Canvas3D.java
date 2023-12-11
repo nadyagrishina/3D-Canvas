@@ -3,7 +3,7 @@ import rasterize.RasterBufferedImage;
 import renderer.WiredRenderer;
 import solids.Octahedron;
 import solids.Pyramid;
-import solids.Solid;
+import solids.*;
 import transforms.*;
 
 import javax.swing.*;
@@ -20,7 +20,9 @@ public class Canvas3D {
     private final WiredRenderer wiredRenderer;
     private Solid pyramid;
     private Solid octahedron;
-    private Camera camera;
+    private Camera camera = new Camera();
+    private Camera orthographicCamera;
+    private Camera perspectiveCamera;
     private Mat4 projectionMatrix;
     private Mat4 translPyramid = new Mat4Identity();
     private Mat4 scalePyramid = new Mat4Identity();
@@ -32,12 +34,21 @@ public class Canvas3D {
     private Mode transformMode = Mode.DEFAULT;
     private int oldX = 0;
     private int oldY = 0;
+    double deltaX;
+    double deltaY;
     private Solid activeSolid;
+    private Ferguson ferguson;
+    private Bezier bezier;
+    private Coons coons;
     private boolean isPyramidSelected = true;
     private boolean isOctahedronSelected = true;
     private boolean isBothSelected = true;
     private boolean isOrthographicProjection = false;
     private boolean axesVisible = true;
+    private boolean isCubicVisible = true;
+    private boolean isBothVisible = true;
+    private boolean isPyramidVisible = true;
+    private boolean isOctahedronVisible = true;
 
     public Canvas3D(int width, int height) {
         JFrame frame = new JFrame();
@@ -97,11 +108,11 @@ public class Canvas3D {
 
     private void handleKeyPress(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_T -> {
+            case KeyEvent.VK_SHIFT -> {
                 transformMode = Mode.TRANSLATION;
                 checkSelection();
             }
-            case KeyEvent.VK_SPACE -> {
+            case KeyEvent.VK_T -> {
                 transformMode = Mode.SCALE;
                 checkSelection();
             }
@@ -117,20 +128,22 @@ public class Canvas3D {
             case KeyEvent.VK_E -> camera = camera.down(0.3);
             case KeyEvent.VK_P -> toggleSelectedSolid();
             case KeyEvent.VK_M -> toggleAxes();
-            case KeyEvent.VK_SHIFT -> {
+            case KeyEvent.VK_N -> toggleCubic();
+            case KeyEvent.VK_1 -> togglePyramid();
+            case KeyEvent.VK_2 -> toggleOctahedron();
+            case KeyEvent.VK_SPACE -> {
                 toggleProjection();
                 initScene();
             }
         }
         renderScene();
     }
-
     private void handleMouseDrag(MouseEvent e) {
-        double deltaX = (e.getX() - oldX) / 200.0;
-        double deltaY = (e.getY() - oldY) / 200.0;
+        deltaX = (e.getX() - oldX) / 200.0;
+        deltaY = (e.getY() - oldY) / 200.0;
 
         double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        double maxTranslationDistance = 2.0;
+        double maxTranslationDistance = 0.1;
         if (distance > maxTranslationDistance) {
             double scaleFactor = maxTranslationDistance / distance;
             deltaX *= scaleFactor;
@@ -138,10 +151,10 @@ public class Canvas3D {
         }
         switch (transformMode) {
             case TRANSLATION -> {
-                if (isBothSelected) {
+                if (isBothSelected && isBothVisible) {
                     translPyramid = translPyramid.mul(new Mat4Transl(deltaX * 2, 0.0, -deltaY * 2));
                     translOctahedron = translOctahedron.mul(new Mat4Transl(deltaX * 2, 0.0, -deltaY * 2));
-                } else if (isPyramidSelected) {
+                } else if (isPyramidSelected && isPyramidVisible) {
                     translPyramid = translPyramid.mul(new Mat4Transl(deltaX * 2, 0.0, -deltaY * 2));
                 } else {
                     translOctahedron = translOctahedron.mul(new Mat4Transl(deltaX * 2, 0.0, -deltaY * 2));
@@ -149,21 +162,27 @@ public class Canvas3D {
             }
             case SCALE -> {
                 double scaleFactor = calculateScaleFactor(e.getX(), e.getY());
-                if (isBothSelected) {
+                if (isBothSelected && isBothVisible) {
                     scalePyramid = scalePyramid.mul(new Mat4Scale(scaleFactor, scaleFactor, scaleFactor));
                     scaleOctahedron = scaleOctahedron.mul(new Mat4Scale(scaleFactor, scaleFactor, scaleFactor));
-                } else if (isPyramidSelected) {
+                } else if (isPyramidSelected && isPyramidVisible) {
                     scalePyramid = scalePyramid.mul(new Mat4Scale(scaleFactor, scaleFactor, scaleFactor));
                 } else {
                     scaleOctahedron = scaleOctahedron.mul(new Mat4Scale(scaleFactor, scaleFactor, scaleFactor));
                 }
             }
+            case DEFAULT -> {
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    camera = camera.left(deltaX).up(deltaY);
+                    renderScene();
+                }
+            }
             case ROTATION -> {
                 Mat4 rotationMatrix = calculateRotationMatrix(e.getX(), e.getY());
-                if (isBothSelected) {
+                if (isBothSelected && isBothVisible) {
                     rotatePyramid = rotationMatrix.mul(rotatePyramid);
                     rotateOctahedron = rotationMatrix.mul(rotateOctahedron);
-                } else if (isPyramidSelected) {
+                } else if (isPyramidSelected && isPyramidVisible) {
                     rotatePyramid = rotationMatrix.mul(rotatePyramid);
                 } else {
                     rotateOctahedron = rotationMatrix.mul(rotateOctahedron);
@@ -175,26 +194,45 @@ public class Canvas3D {
         renderScene();
     }
     private void initScene() {
-        camera = new Camera(new Vec3D(0.4, -5, 1),
-                Math.toRadians(90),
-                Math.toRadians(-15),
-                1. ,
-                true);
+        deltaX = 0.0;
+        deltaY = 0.0;
 
-        projectionMatrix = isOrthographicProjection ?
-                new Mat4OrthoRH(800,600, 0.1, 20) :
-                new Mat4PerspRH(Math.PI / 4, 600 / 800., 0.1, 20);
+        if (isOrthographicProjection) {
+            projectionMatrix = new Mat4OrthoRH(5.07, 3.9, 0.1, 20);
+            // Initialize orthographic camera parameters
+            orthographicCamera = new Camera(new Vec3D(0.4, 0, -0.3),
+                    Math.toRadians(90),
+                    Math.toRadians(0),
+                    0.1,
+                    true);
+            camera = orthographicCamera;
+        } else {
+            projectionMatrix = new Mat4PerspRH(Math.PI / 4, 600 / 800., 0.1, 20);
+            // Initialize perspective camera parameters
+            perspectiveCamera = new Camera(new Vec3D(0.4, -5, 1),
+                    Math.toRadians(90),
+                    Math.toRadians(-15),
+                    0.1,
+                    true);
+            camera = perspectiveCamera;
+        }
 
         pyramid = new Pyramid();
         octahedron = new Octahedron();
+
+        ferguson = new Ferguson(100, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
+        bezier = new Bezier(100, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
+        coons = new Coons(100, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
         setActiveSolid(pyramid);
         renderScene();
     }
 
     private void renderScene() {
         clear();
+
         wiredRenderer.setView(camera.getViewMatrix());
         wiredRenderer.setProj(projectionMatrix);
+
         if (isBothSelected) {
             Mat4 modelMatrixPyramid = rotatePyramid.mul(scalePyramid).mul(translPyramid);
             Mat4 modelMatrixOctahedron = rotateOctahedron.mul(scaleOctahedron).mul(translOctahedron);
@@ -205,10 +243,28 @@ public class Canvas3D {
                     : rotateOctahedron.mul(scaleOctahedron).mul(translOctahedron));
             activeSolid.setModel(modelMatrix);
         }
-        if (axesVisible)
+
+        if (axesVisible) {
             wiredRenderer.renderAxes();
-        wiredRenderer.render(pyramid, Color.decode("#FF9999"));
-        wiredRenderer.render(octahedron, Color.decode("#FFFF99"));
+        }
+
+        Color pyramidColor = Color.decode("#7455F1");
+        Color octahedronColor = Color.decode("#D3F157");
+
+        if (isBothVisible) {
+            wiredRenderer.render(pyramid, pyramidColor);
+            wiredRenderer.render(octahedron, octahedronColor);
+        } else if (isOctahedronVisible) {
+            wiredRenderer.render(octahedron, octahedronColor);
+        } else {
+            wiredRenderer.render(pyramid, pyramidColor);
+        }
+        if (isCubicVisible) {
+            wiredRenderer.render(ferguson, Color.decode("#F1A855"));
+            wiredRenderer.render(bezier, Color.decode("#F55993"));
+            wiredRenderer.render(coons, Color.decode("#6AF155"));
+        }
+
         panel.repaint();
     }
     private void clear() {
@@ -223,8 +279,8 @@ public class Canvas3D {
                 * (1.0 - (2.0 * (oldX - mouseX) / panel.getWidth()));
     }
     private Mat4 calculateRotationMatrix(int mouseX, int mouseY) {
-        double rotY = Math.PI * (oldY - mouseY) / panel.getHeight();
-        double rotZ = Math.PI * (oldX - mouseX) / panel.getWidth();
+        double rotY = 1.5 * Math.PI * (oldY - mouseY) / panel.getHeight();
+        double rotZ = 1.5 * Math.PI * (oldX - mouseX) / panel.getWidth();
 
         Mat4 rotYMatrix = new Mat4RotY(rotY);
         Mat4 rotZMatrix = new Mat4RotZ(rotZ);
@@ -254,11 +310,37 @@ public class Canvas3D {
             activeSolid = pyramid;
         }
     }
+    private void togglePyramid(){
+        if(isBothVisible){
+            isBothVisible = false;
+            isPyramidVisible = true;
+            isOctahedronVisible = false;
+        } else if (isPyramidVisible) {
+            isOctahedronVisible = true;
+            isBothVisible = true;
+        }
+    }
+    private void toggleOctahedron(){
+        if(isBothVisible){
+            isBothVisible = false;
+            isPyramidVisible = false;
+            isOctahedronVisible = true;
+        } else if (isOctahedronVisible) {
+            isPyramidVisible = true;
+            isBothVisible = true;
+        }
+    }
     private void toggleAxes(){
         axesVisible = !axesVisible;
     }
+    private void toggleCubic(){
+        isCubicVisible = !isCubicVisible;
+    }
+
     private void toggleProjection(){
         isOrthographicProjection = !isOrthographicProjection;
+        initScene();
+        renderScene();
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Canvas3D(800, 600));
