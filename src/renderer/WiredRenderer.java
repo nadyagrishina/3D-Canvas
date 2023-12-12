@@ -34,19 +34,23 @@ public class WiredRenderer {
             a = a.mul(solid.getModel()).mul(view).mul(proj);
             b = b.mul(solid.getModel()).mul(view).mul(proj);
 
+            //Clipping
             if (clipLine(a, b)) {
                 continue;
             }
 
+            //Dehomogenizace
             a = dehomogenize(a);
             b = dehomogenize(b);
 
             Vec3D v1 = new Vec3D(a);
             Vec3D v2 = new Vec3D(b);
 
+            //Window-viewport transformation
             v1 = transformToWindow(v1);
             v2 = transformToWindow(v2);
 
+            //Rasterization
             lineRasterizer.rasterize(
                     (int)Math.round(v1.getX()), (int)Math.round(v1.getY()),
                     (int)Math.round(v2.getX()), (int)Math.round(v2.getY()),
@@ -90,6 +94,7 @@ public class WiredRenderer {
         coloredAxes.render();
     }
     public void renderLine(Point3D start, Point3D end, Color color) {
+
         start = start.mul(view).mul(proj);
         end = end.mul(view).mul(proj);
 
