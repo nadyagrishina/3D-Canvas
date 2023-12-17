@@ -13,14 +13,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
+import java.io.Serial;
 
 public class Canvas3D {
     private final JPanel panel;
     private final RasterBufferedImage raster;
     private final WiredRenderer wiredRenderer;
     private Camera camera = new Camera();
-    private Camera orthographicCamera;
-    private Camera perspectiveCamera;
     private Mat4 projectionMatrix;
     private Mat4 translPyramid = new Mat4Identity();
     private Mat4 scalePyramid = new Mat4Identity();
@@ -31,6 +30,7 @@ public class Canvas3D {
     private Mode transformMode = Mode.DEFAULT;
     private int oldX = 0;
     private int oldY = 0;
+    private int smoothness = 50;
     private double deltaX;
     private double deltaY;
     private Solid pyramid;
@@ -39,7 +39,6 @@ public class Canvas3D {
     private Solid ferguson;
     private Solid bezier;
     private Solid coons;
-    private Solid activeCubic;
     private boolean isPyramidSelected = true;
     private boolean isOctahedronSelected = true;
     private boolean isBothSelected = true;
@@ -49,12 +48,31 @@ public class Canvas3D {
     private boolean isBothVisible = true;
     private boolean isPyramidVisible = true;
     private boolean isOctahedronVisible = true;
-    private boolean isFergusonSelected = true;
-    private boolean isBezierSelected = false;
-    private boolean isCoonsSelected = false;
-
     public Canvas3D(int width, int height) {
+        JPanel descriptionPanel = new JPanel();
+        JLabel keyDescriptionLabel = new JLabel(
+                "<html>" +
+                        "<style>" +
+                        "strong { color: #000000;}" +
+                        "p {color: #202020; font-size: 11px; margin: 4px 0;}" +
+                        "</style>" +
+                        "<div style='width: 180px; padding: 5px 10px;'>" +
+                        "<p><strong>[WSADQE]: </strong> to move camera.</p>" +
+                        "<p><strong>[P]: </strong> to toggle active figure.</p>" +
+                        "<p><strong>[C]: </strong> return the figure to its original position.</p>" +
+                        "<p><strong>[R + mouse]: </strong> to rotate.</p>" +
+                        "<p><strong>[T] + mouse: </strong> to scale.</p>" +
+                        "<p><strong>[SHIFT + mouse]: </strong> to translate.</p>" +
+                        "<p><strong>[M]: </strong> to show/off axes.</p>" +
+                        "<p><strong>[N]: </strong> to show/off cubic lines.</p>" +
+                        "<p><strong>[1]: </strong> to show/off octahedron.</p>" +
+                        "<p><strong>[2]: </strong> to show/off pyramid.</p>" +
+                        "</div>"
+        );
+        descriptionPanel.add(keyDescriptionLabel);
+
         JFrame frame = new JFrame();
+
         frame.setLayout(new BorderLayout());
         frame.setTitle("UHK FIM PGRF : " + this.getClass().getName());
         frame.setResizable(true);
@@ -65,6 +83,8 @@ public class Canvas3D {
         wiredRenderer = new WiredRenderer(lineRasterizer);
 
         panel = new JPanel() {
+            @Serial
+            private static final long serialVersionUID = 1L;
             @Override
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -74,6 +94,7 @@ public class Canvas3D {
         panel.setPreferredSize(new Dimension(width, height));
 
         frame.add(panel, BorderLayout.CENTER);
+        frame.add(descriptionPanel, BorderLayout.EAST);
         frame.pack();
         frame.setVisible(true);
 
@@ -130,11 +151,21 @@ public class Canvas3D {
             case KeyEvent.VK_Q -> camera = camera.up(0.3);
             case KeyEvent.VK_E -> camera = camera.down(0.3);
             case KeyEvent.VK_P -> toggleSelectedSolid();
-            case KeyEvent.VK_O -> toggleSelectedCubic();
             case KeyEvent.VK_M -> toggleAxes();
             case KeyEvent.VK_N -> toggleCubic();
             case KeyEvent.VK_1 -> togglePyramid();
             case KeyEvent.VK_2 -> toggleOctahedron();
+            case KeyEvent.VK_J -> smoothness += 20;
+            case KeyEvent.VK_H -> smoothness -= 20;
+            case KeyEvent.VK_C -> {
+                translOctahedron = new Mat4Transl(0.,0.,0.);
+                translPyramid = new Mat4Transl(0.,0.,0.);
+                rotateOctahedron = new Mat4Identity();
+                rotatePyramid = new Mat4Identity();
+                scaleOctahedron = new Mat4Identity();
+                scalePyramid = new Mat4Identity();
+
+            }
             case KeyEvent.VK_SPACE -> {
                 toggleProjection();
                 initScene();
@@ -203,35 +234,30 @@ public class Canvas3D {
 
         if (isOrthographicProjection) {
             // Initialize orthographic camera parameters
-            orthographicCamera = new Camera(new Vec3D(0.4, 0, -0.3),
+            camera = new Camera(new Vec3D(0.4, 0, -0.3),
                     Math.toRadians(90),
                     Math.toRadians(0),
                     0.1,
                     true);
-            orthographicCamera.left(deltaX).right(deltaY);
-            camera = orthographicCamera;
             projectionMatrix = new Mat4OrthoRH(5.07, 3.9, 0.1, 20);
         } else {
             // Initialize perspective camera parameters
-            perspectiveCamera = new Camera(new Vec3D(0.4, -5, 1),
+            camera = new Camera(new Vec3D(0.4, -5, 1),
                     Math.toRadians(90),
                     Math.toRadians(-15),
                     0.1,
                     true);
-            perspectiveCamera.left(deltaX).right(deltaY);
-            camera = perspectiveCamera;
             projectionMatrix = new Mat4PerspRH(Math.PI / 4, 600 / 800., 0.1, 20);
         }
 
         pyramid = new Pyramid();
         octahedron = new Octahedron();
 
-        ferguson = new Ferguson(100, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
-        bezier = new Bezier(100, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
-        coons = new Coons(100, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
+        ferguson = new Ferguson(smoothness, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
+        bezier = new Bezier(smoothness, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
+        coons = new Coons(smoothness, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
 
         setActiveSolid(pyramid);
-        setActiveCubic(ferguson);
         renderScene();
     }
 
@@ -303,9 +329,6 @@ public class Canvas3D {
     public void setActiveSolid(Solid solid) {
         activeSolid = solid;
     }
-    public void setActiveCubic(Solid cubic){
-        activeCubic = cubic;
-    }
     private void checkSelection() {
         isBothSelected = isPyramidSelected && isOctahedronSelected;
     }
@@ -324,23 +347,6 @@ public class Canvas3D {
             isPyramidSelected = true;
             isOctahedronSelected = true;
             activeSolid = pyramid;
-        }
-        renderScene();
-    }
-    private void toggleSelectedCubic() {
-        isFergusonSelected = !isFergusonSelected;
-        isBezierSelected = !isBezierSelected;
-        isCoonsSelected = !isCoonsSelected;
-
-        if (isFergusonSelected) {
-            setActiveSolid(ferguson);
-        } else if (isBezierSelected) {
-            setActiveSolid(bezier);
-        } else if (isCoonsSelected) {
-            setActiveSolid(coons);
-        } else {
-            setActiveSolid(ferguson);
-            isFergusonSelected = true;
         }
         renderScene();
     }
@@ -370,7 +376,6 @@ public class Canvas3D {
     private void toggleCubic(){
         isCubicVisible = !isCubicVisible;
     }
-
     private void toggleProjection(){
         isOrthographicProjection = !isOrthographicProjection;
         initScene();

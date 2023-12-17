@@ -62,7 +62,7 @@ public class WiredRenderer {
         double xMax = 1.0;
         double yMin = -1.0;
         double yMax = 1.0;
-        double zMin = 0.0;
+        double zMin = 1.0;
         double zMax = 1.0;
         return !(Math.min(a.getX(), b.getX()) < xMin || Math.max(a.getX(), b.getX()) > xMax
                 || Math.min(a.getY(), b.getY()) < yMin || Math.max(a.getY(), b.getY()) > yMax
