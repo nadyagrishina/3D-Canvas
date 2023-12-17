@@ -30,7 +30,6 @@ public class Canvas3D {
     private Mode transformMode = Mode.DEFAULT;
     private int oldX = 0;
     private int oldY = 0;
-    private int smoothness = 50;
     private double deltaX;
     private double deltaY;
     private Solid pyramid;
@@ -155,8 +154,6 @@ public class Canvas3D {
             case KeyEvent.VK_N -> toggleCubic();
             case KeyEvent.VK_1 -> togglePyramid();
             case KeyEvent.VK_2 -> toggleOctahedron();
-            case KeyEvent.VK_J -> smoothness += 20;
-            case KeyEvent.VK_H -> smoothness -= 20;
             case KeyEvent.VK_C -> {
                 translOctahedron = new Mat4Transl(0.,0.,0.);
                 translPyramid = new Mat4Transl(0.,0.,0.);
@@ -253,9 +250,9 @@ public class Canvas3D {
         pyramid = new Pyramid();
         octahedron = new Octahedron();
 
-        ferguson = new Ferguson(smoothness, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
-        bezier = new Bezier(smoothness, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
-        coons = new Coons(smoothness, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
+        ferguson = new Ferguson(100, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
+        bezier = new Bezier(100, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
+        coons = new Coons(100, new Point3D(-1,-1,-1),new Point3D(-2.5,-2,0),new Point3D(1,-3,2),new Point3D(0, 0, 1));
 
         setActiveSolid(pyramid);
         renderScene();
