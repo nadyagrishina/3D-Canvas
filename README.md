@@ -1,39 +1,51 @@
-# 3D Canvas
+# 🌐 3D Canvas
 
-The Canvas3D Java class is a simple 3D graphics application that allows users to interact with and manipulate 3D geometric shapes (pyramid and octahedron) using keyboard and mouse input. The application provides a 3D view of the scene, supports different transformations (translation, rotation, and scaling), and allows users to switch between orthographic and perspective projections.
+**Author:** Nadezhda Grishina  
+**Version:** 2023
 
-## Features
+---
 
-- **Keyboard Controls:**
-  - W, A, S, D, Q, E keys to move the camera forward, backward, left, right, up, and down, respectively.
+## 🧩 Description
 
-- **Toggle Active Figure:**
-  - P key to toggle between the active geometric figures (pyramid and octahedron).
+The **3D Canvas** project is a Java application that allows users to interactively manipulate 3D geometric shapes (pyramid and octahedron). It offers transformations like translation, rotation, and scaling, as well as projection switching between orthographic and perspective views.
 
-- **Reset Figure Position:**
-  - C key to return the selected figure to its original position.
+This project is perfect for exploring 3D graphics, computer vision, and user interaction in Java.
 
-- **Transformations:**
-  - **Rotation:** R key in combination with mouse drag to rotate the selected figure.
-  - **Scaling:** T key in combination with mouse drag to scale the selected figure.
-  - **Translation:** SHIFT key in combination with mouse drag to translate the selected figure.
+---
 
-- **Controls:**
-  - Show/Hide Axes: M key to toggle the visibility of coordinate axes.
-  - Show/Hide Cubic Lines: N key to toggle the visibility of cubic lines.
-  - Toggle Octahedron: 1 key to show/hide the octahedron.
-  - Toggle Pyramid: 2 key to show/hide the pyramid.
-  - SPACE key to toggle between orthographic and perspective projections.
+## 🚀 Features
 
+- 🎮 **Keyboard Controls:**
+  - **W, A, S, D, Q, E** to move the camera forward, backward, left, right, up, and down.
 
-## Getting Started
+- 🔄 **Toggle Active Figure:**
+  - **P** to toggle between the pyramid and octahedron.
+
+- 🔄 **Reset Figure Position:**
+  - **C** to reset the selected figure to its original position.
+
+- 🔧 **Transformations:**
+  - **Rotation:** Press **R** and drag the mouse to rotate the figure.
+  - **Scaling:** Press **T** and drag the mouse to scale the figure.
+  - **Translation:** Hold **Shift** and drag the mouse to translate the figure.
+
+- 🛠️ **Controls:**
+  - **M** to toggle coordinate axes visibility.
+  - **N** to toggle cubic lines visibility.
+  - **1** to toggle the octahedron visibility.
+  - **2** to toggle the pyramid visibility.
+  - **Space** to toggle between orthographic and perspective projections.
+
+---
+
+> ✨ Live demo ↓
+
+![3D Canvas Demo](demo.gif)
+
+---
+
+## 🛠️ Installation
 
 1. Clone the repository:
-git clone https://gitlab.com/jakub.benes.student1/pgrf1-task03.git
-2. Open the project in your Java IDE.
-3. Run the AppStart class to start the application.
-
-
-## Author
-
-Nadezhda Grishina
+   ```bash
+   git clone https://gitlab.com/jakub.benes.student1/pgrf1-task03.git

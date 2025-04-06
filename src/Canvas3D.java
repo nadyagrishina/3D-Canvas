@@ -161,7 +161,6 @@ public class Canvas3D {
                 rotatePyramid = new Mat4Identity();
                 scaleOctahedron = new Mat4Identity();
                 scalePyramid = new Mat4Identity();
-
             }
             case KeyEvent.VK_SPACE -> {
                 toggleProjection();
