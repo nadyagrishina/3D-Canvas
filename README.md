@@ -48,4 +48,4 @@ This project is perfect for exploring 3D graphics, computer vision, and user int
 
 1. Clone the repository:
    ```bash
-   git clone https://gitlab.com/jakub.benes.student1/pgrf1-task03.git
+   git clone https://github.com/nadyagrishina/3D-Canvas.git
