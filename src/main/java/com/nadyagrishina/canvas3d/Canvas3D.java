@@ -44,10 +44,6 @@ public class Canvas3D {
     private boolean isPyramidVisible = true;
     private boolean isOctahedronVisible = true;
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Canvas3D(800, 600));
-    }
-
     public Canvas3D(int width, int height) {
         JPanel descriptionPanel = new JPanel();
         JLabel keyDescriptionLabel = new JLabel(
