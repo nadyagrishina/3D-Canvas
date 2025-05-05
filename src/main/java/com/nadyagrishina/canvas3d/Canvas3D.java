@@ -97,6 +97,7 @@ public class Canvas3D {
         frame.add(descriptionPanel, BorderLayout.EAST);
         frame.pack();
         frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
 
         initScene();
 
