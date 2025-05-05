@@ -9,10 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.Serial;
 
 public class Canvas3D extends JPanel {
-    private final JPanel panel;
     private final BufferedImage raster;
     private final WiredRenderer wiredRenderer;
     private Camera camera = new Camera();
@@ -45,53 +43,18 @@ public class Canvas3D extends JPanel {
     private boolean isOctahedronVisible = true;
 
     public Canvas3D(int width, int height) {
-        JPanel descriptionPanel = new JPanel();
-        JLabel keyDescriptionLabel = new JLabel(
-                "<html>" +
-                        "<style>" +
-                        "strong { color: #000000;}" +
-                        "p {color: #202020; font-size: 11px; margin: 4px 0;}" +
-                        "</style>" +
-                        "<div style='width: 180px; padding: 5px 10px;'>" +
-                        "<p><strong>[WSADQE]: </strong> to move camera.</p>" +
-                        "<p><strong>[P]: </strong> to toggle active figure.</p>" +
-                        "<p><strong>[C]: </strong> return the figure to its original position.</p>" +
-                        "<p><strong>[R + mouse]: </strong> to rotate.</p>" +
-                        "<p><strong>[T] + mouse: </strong> to scale.</p>" +
-                        "<p><strong>[SHIFT + mouse]: </strong> to translate.</p>" +
-                        "<p><strong>[M]: </strong> to show/off axes.</p>" +
-                        "<p><strong>[N]: </strong> to show/off cubic lines.</p>" +
-                        "<p><strong>[1]: </strong> to show/off octahedron.</p>" +
-                        "<p><strong>[2]: </strong> to show/off pyramid.</p>" +
-                        "</div>"
-        );
-        descriptionPanel.add(keyDescriptionLabel);
-
         raster = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         LineRasterizer lineRasterizer = new LineRasterizer(raster);
         wiredRenderer = new WiredRenderer(lineRasterizer);
 
-        panel = new JPanel() {
-            @Serial
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                present(g);
-            }
-        };
-        panel.setPreferredSize(new Dimension(width, height));
-
-        this.setLayout(new BorderLayout());
-        this.add(panel, BorderLayout.CENTER);
-        this.add(descriptionPanel, BorderLayout.EAST);
+        this.setPreferredSize(new Dimension(width, height));
 
         initScene();
 
-        panel.setFocusable(true);
-        panel.requestFocusInWindow();
+        this.setFocusable(true);
+        this.requestFocusInWindow();
 
-        panel.addKeyListener(new KeyAdapter() {
+        this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent e) {
                 handleKeyPress(e);
@@ -102,7 +65,7 @@ public class Canvas3D extends JPanel {
                 transformMode = Mode.DEFAULT;
             }
         });
-        panel.addMouseMotionListener(new MouseAdapter() {
+        this.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -110,12 +73,18 @@ public class Canvas3D extends JPanel {
                 oldY = e.getY();
             }
         });
-        panel.addMouseMotionListener(new MouseMotionAdapter() {
+        this.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
                 handleMouseDrag(e);
             }
         });
+    }
+
+    @Override
+    protected void paintComponent(final Graphics g) {
+        super.paintComponent(g);
+        this.present(g);
     }
 
     private void handleKeyPress(KeyEvent e) {
@@ -289,7 +258,7 @@ public class Canvas3D extends JPanel {
             wiredRenderer.render(coons, Color.decode("#6AF155"));
         }
 
-        panel.repaint();
+        this.repaint();
     }
 
     private void clear() {
@@ -303,12 +272,12 @@ public class Canvas3D extends JPanel {
     }
 
     private double calculateScaleFactor(int mouseX, int mouseY) {
-        return (1.0 + (2.0 * (oldY - mouseY) / panel.getHeight()))
-                * (1.0 - (2.0 * (oldX - mouseX) / panel.getWidth()));
+        return (1.0 + (2.0 * (oldY - mouseY) / this.getHeight()))
+                * (1.0 - (2.0 * (oldX - mouseX) / this.getWidth()));
     }
     private Mat4 calculateRotationMatrix(int mouseX, int mouseY) {
-        double rotY = 1.5 * Math.PI * (oldY - mouseY) / panel.getHeight();
-        double rotZ = 1.5 * Math.PI * (oldX - mouseX) / panel.getWidth();
+        double rotY = 1.5 * Math.PI * (oldY - mouseY) / this.getHeight();
+        double rotZ = 1.5 * Math.PI * (oldX - mouseX) / this.getWidth();
 
         Mat4 rotYMatrix = new Mat4RotY(rotY);
         Mat4 rotZMatrix = new Mat4RotZ(rotZ);
