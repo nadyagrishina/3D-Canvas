@@ -43,6 +43,11 @@ public class Canvas3D {
     private boolean isBothVisible = true;
     private boolean isPyramidVisible = true;
     private boolean isOctahedronVisible = true;
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Canvas3D(800, 600));
+    }
+
     public Canvas3D(int width, int height) {
         JPanel descriptionPanel = new JPanel();
         JLabel keyDescriptionLabel = new JLabel(
@@ -376,9 +381,6 @@ public class Canvas3D {
         isOrthographicProjection = !isOrthographicProjection;
         initScene();
         renderScene();
-    }
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new Canvas3D(800, 600));
     }
     private enum Mode {
         DEFAULT, TRANSLATION, SCALE, ROTATION
