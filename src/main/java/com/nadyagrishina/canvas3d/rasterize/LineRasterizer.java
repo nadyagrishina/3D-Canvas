@@ -4,7 +4,7 @@ import com.nadyagrishina.canvas3d.model.Line;
 
 import java.awt.*;
 
-public abstract class LineRasterizer {
+public class LineRasterizer {
     Raster raster;
     Color color;
 
@@ -29,6 +29,9 @@ public abstract class LineRasterizer {
     }
 
     protected void drawLine(int x1, int y1, int x2, int y2, Color color) {
-
+        Graphics2D g = (Graphics2D) ((RasterBufferedImage)raster).getImg().getGraphics();
+        g.setStroke(new BasicStroke(2));
+        g.setColor(color);
+        g.drawLine(x1, y1, x2, y2);
     }
 }

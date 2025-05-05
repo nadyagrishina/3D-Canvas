@@ -1,6 +1,6 @@
 package com.nadyagrishina.canvas3d;
 
-import com.nadyagrishina.canvas3d.rasterize.LineRasterizerGraphics;
+import com.nadyagrishina.canvas3d.rasterize.LineRasterizer;
 import com.nadyagrishina.canvas3d.rasterize.RasterBufferedImage;
 import com.nadyagrishina.canvas3d.renderer.WiredRenderer;
 import com.nadyagrishina.canvas3d.solids.*;
@@ -78,7 +78,7 @@ public class Canvas3D {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         raster = new RasterBufferedImage(width, height);
-        LineRasterizerGraphics lineRasterizer = new LineRasterizerGraphics(raster);
+        LineRasterizer lineRasterizer = new LineRasterizer(raster);
         wiredRenderer = new WiredRenderer(lineRasterizer);
 
         panel = new JPanel() {
