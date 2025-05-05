@@ -11,7 +11,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.Serial;
 
-public class Canvas3D {
+public class Canvas3D extends JPanel {
     private final JPanel panel;
     private final BufferedImage raster;
     private final WiredRenderer wiredRenderer;
@@ -67,13 +67,6 @@ public class Canvas3D {
         );
         descriptionPanel.add(keyDescriptionLabel);
 
-        JFrame frame = new JFrame();
-
-        frame.setLayout(new BorderLayout());
-        frame.setTitle("UHK FIM PGRF : " + this.getClass().getName());
-        frame.setResizable(true);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         raster = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         LineRasterizer lineRasterizer = new LineRasterizer(raster);
         wiredRenderer = new WiredRenderer(lineRasterizer);
@@ -89,15 +82,13 @@ public class Canvas3D {
         };
         panel.setPreferredSize(new Dimension(width, height));
 
-        frame.add(panel, BorderLayout.CENTER);
-        frame.add(descriptionPanel, BorderLayout.EAST);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setLocationRelativeTo(null);
+        this.setLayout(new BorderLayout());
+        this.add(panel, BorderLayout.CENTER);
+        this.add(descriptionPanel, BorderLayout.EAST);
 
         initScene();
 
-        panel.requestFocus();
+        panel.setFocusable(true);
         panel.requestFocusInWindow();
 
         panel.addKeyListener(new KeyAdapter() {
