@@ -1,5 +1,7 @@
 package com.nadyagrishina.canvas3d.transforms;
 
+import lombok.Getter;
+
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,10 +13,9 @@ import java.util.Optional;
  * @author PGRF FIM UHK
  * @version 2016
  */
-
-
+@Getter
 public class Vec2D {
-	private final double x, y;
+    private final double x, y;
 
 	/**
 	 * Creates a zero vector
@@ -57,27 +58,9 @@ public class Vec2D {
 		x = v.x;
 		y = v.y;
 	}
-	
 
-	/**
-	 * Returns the x coordinate
-	 * 
-	 * @return the x
-	 */
-	public double getX() {
-		return x;
-	}
 
-	/**
-	 * Returns the y coordinate
-	 * 
-	 * @return the y
-	 */
-	public double getY() {
-		return y;
-	}
-
-	/**
+    /**
 	 * Returns a clone of this vector with the x coordinate replaced by the
 	 * given value
 	 * 
