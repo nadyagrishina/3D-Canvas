@@ -1,5 +1,7 @@
 package com.nadyagrishina.canvas3d.transforms;
 
+import lombok.Getter;
+
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,9 +12,9 @@ import java.util.Optional;
  * @author PGRF FIM UHK 
  * @version 2016
  */
-
+@Getter
 public class Point2D {
-	private final double x, y, w;
+    private final double x, y, w;
 
 	/**
 	 * Creates a homogeneous point representing the origin 
@@ -104,36 +106,9 @@ public class Point2D {
 		y = array[1];
 		w = array[3];
 	}
-	
 
-	/**
-	 * Returns the homogeneous x coordinate
-	 * 
-	 * @return the x
-	 */
-	public double getX() {
-		return x;
-	}
 
-	/**
-	 * Returns the homogeneous y coordinate
-	 * 
-	 * @return the y
-	 */
-	public double getY() {
-		return y;
-	}
-
-	/**
-	 * Returns the homogeneous w coordinate
-	 * 
-	 * @return the w
-	 */
-	public double getW() {
-		return w;
-	}
-
-	/**
+    /**
 	 * Returns a clone of this point with the homogeneous x coordinate replaced by the
 	 * given value
 	 * 
