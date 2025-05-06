@@ -49,7 +49,7 @@ This project is perfect for exploring 3D graphics, computer vision, and user int
 
 > ✨ Live demo ↓
 
-![3D Canvas Demo](demo.gif)
+![3D Canvas Demo](canvas-demo.gif)
 
 ---
 
