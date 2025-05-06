@@ -1,3 +1,4 @@
+![Dependabot Status](https://img.shields.io/badge/dependabot-enabled-brightgreen?logo=dependabot)
 # 🌐 3D Canvas
 
 **Author:** Nadezhda Grishina  
@@ -38,6 +39,14 @@ This project is perfect for exploring 3D graphics, computer vision, and user int
 
 ---
 
+## 🧰 Technologies Used
+
+- Java 21
+- Swing (Java AWT/Swing)
+- Maven
+
+---
+
 > ✨ Live demo ↓
 
 ![3D Canvas Demo](demo.gif)
@@ -49,3 +58,8 @@ This project is perfect for exploring 3D graphics, computer vision, and user int
 1. Clone the repository:
    ```bash
    git clone https://github.com/nadyagrishina/3D-Canvas.git
+2. Open in IntelliJ or another IDE
+
+3. Run the `Driver` class
+
+4. Make sure you have Java 21 installed
