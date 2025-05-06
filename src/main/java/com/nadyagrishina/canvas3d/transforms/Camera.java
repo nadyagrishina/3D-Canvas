@@ -1,5 +1,7 @@
 package com.nadyagrishina.canvas3d.transforms;
 
+import lombok.Getter;
+
 import java.util.Locale;
 
 /**
@@ -13,9 +15,18 @@ import java.util.Locale;
  * @version 2016
  */
 public class Camera {
-	double azimuth, radius, zenith;
+	/** The azimuth angle, in radians. */
+    @Getter double azimuth;
+	/** The distance between the eye (camera) and the observer in 3rd person camera mode. */
+    @Getter double radius;
+	/** The zenith angle, in radians. */
+    @Getter double zenith;
 	boolean firstPerson;
-	Vec3D eye, viewVector, pos;
+	/** The eye (camera) position, depends on the value of the 1st/3rd person camera mode flag. */
+    @Getter Vec3D eye;
+	/** The view direction, as specified by azimuth and zenith */
+    @Getter Vec3D viewVector;
+    Vec3D pos;
 	Mat4 view;
 
 	/**
@@ -197,26 +208,7 @@ public class Camera {
 		return new Camera(this, pos.add(viewVector.mul(speed)));
 	}
 
-	/**
-	 * Returns azimuth in radians
-	 * 
-	 * @return azimuth
-	 */
-	public double getAzimuth() {
-		return azimuth;
-	}
-
-	/**
-	 * Returns the eye (camera) position, depends on the value of the 1st/3rd
-	 * person camera mode flag
-	 * 
-	 * @return eye position
-	 */
-	public Vec3D getEye() {
-		return eye;
-	}
-
-	/**
+    /**
 	 * Returns the value of 1st/3rd person camera mode flag
 	 * 
 	 * @return true -> 1st person mode, false -> 3rd person mode
@@ -235,17 +227,7 @@ public class Camera {
 		return pos;
 	}
 
-	/**
-	 * Returns radius (the distance between the eye (camera) and the observer in
-	 * 3rd person camera mode)
-	 * 
-	 * @return radius
-	 */
-	public double getRadius() {
-		return radius;
-	}
-
-	/**
+    /**
 	 * Returns the view matrix that transforms coordinates from the world
 	 * coordinate set to the camera coordinate set
 	 * 
@@ -255,25 +237,7 @@ public class Camera {
 		return view;
 	}
 
-	/**
-	 * Returns the view direction as specified by azimuth and zenith
-	 * 
-	 * @return view vector
-	 */
-	public Vec3D getViewVector() {
-		return viewVector;
-	}
-
-	/**
-	 * Returns zenith in radians
-	 * 
-	 * @return zenith
-	 */
-	public double getZenith() {
-		return zenith;
-	}
-
-	/**
+    /**
 	 * Returns a new camera moved in the opposite direction of a cross product
 	 * of the view vector and the up vector, i.e. to the left from the
 	 * observer's perspective, by the given distance
