@@ -1,9 +1,9 @@
 package com.nadyagrishina.canvas3d.transforms;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * A quaternion with common operations, immutable 
@@ -12,6 +12,7 @@ import java.util.Objects;
  * @version 2016
  */
 @Getter
+@EqualsAndHashCode
 public class Quat {
     protected final double r, i, j, k;
 
@@ -463,33 +464,6 @@ public class Quat {
 		Quat s2 = q2.quadrangle(this, q3);
 		return new Quat(this.slerp(q2, t).slerp(s1.slerp(s2, t),
 				(double) (2 * t * (1 - t))));
-	}
-
-	/**
-	 * Compares this object against the specified object.
-	 * 
-	 * @param obj
-	 *            the object to compare with.
-	 * @return {@code true} if the objects are the same; {@code false}
-	 *         otherwise.
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		return (obj != null) && (obj instanceof Vec3D) 
-				&& (new Double(((Quat) obj).getR()).equals(getR()))
-				&& (new Double(((Quat) obj).getI()).equals(getI()))
-				&& (new Double(((Quat) obj).getJ()).equals(getJ()))
-				&& (new Double(((Quat) obj).getK()).equals(getK()));
-	}
-
-	/**
-     * Returns a hash code value for the object. 
-     * 
-     * @return  a hash code value for this object.
-     */
-    @Override
-	public int hashCode(){
-		return Objects.hash(this.getR(), this.getI(), this.getJ(), this.getK());
 	}
     
 	/**
