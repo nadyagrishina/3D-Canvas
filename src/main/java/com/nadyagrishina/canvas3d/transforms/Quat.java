@@ -1,5 +1,7 @@
 package com.nadyagrishina.canvas3d.transforms;
 
+import lombok.Getter;
+
 import java.util.Locale;
 import java.util.Objects;
 
@@ -9,9 +11,9 @@ import java.util.Objects;
  * @author PGRF FIM UHK 
  * @version 2016
  */
-
+@Getter
 public class Quat {
-	protected final double r, i, j, k;
+    protected final double r, i, j, k;
 
 	/**
 	 * Creates a zero quaternion
@@ -66,44 +68,8 @@ public class Quat {
 		k = q.k;
 		r = q.r;
 	}
-	
-	/**
-	 * Returns the r coordinate
-	 * 
-	 * @return the r
-	 */
-	public double getR() {
-		return r;
-	}
 
-	/**
-	 * Returns the i coordinate
-	 * 
-	 * @return the i
-	 */
-	public double getI() {
-		return i;
-	}
-
-	/**
-	 * Returns the j coordinate
-	 * 
-	 * @return the j
-	 */
-	public double getJ() {
-		return j;
-	}
-
-	/**
-	 * Returns the k coordinate
-	 *
-	 * @return the k
-	 */
-	public double getK() {
-		return k;
-	}
-
-	/**
+    /**
 	 * Returns the ijk coordinate
 	 *
 	 * @return the ijk as new Vec3D instance
