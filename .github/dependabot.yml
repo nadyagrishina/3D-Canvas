@@ -3,6 +3,9 @@ updates:
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     assignees:
       - "nadyagrishina"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "deps"
