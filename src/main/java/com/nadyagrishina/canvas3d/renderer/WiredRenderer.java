@@ -1,6 +1,6 @@
 package com.nadyagrishina.canvas3d.renderer;
 
-import com.nadyagrishina.canvas3d.rasterize.LineRasterizerGraphics;
+import com.nadyagrishina.canvas3d.rasterize.LineRasterizer;
 import com.nadyagrishina.canvas3d.solids.ColoredAxes;
 import com.nadyagrishina.canvas3d.solids.Solid;
 import com.nadyagrishina.canvas3d.transforms.Mat4;
@@ -11,11 +11,11 @@ import com.nadyagrishina.canvas3d.transforms.Vec3D;
 import java.awt.*;
 
 public class WiredRenderer {
-    private final LineRasterizerGraphics lineRasterizer;
+    private final LineRasterizer lineRasterizer;
     private Mat4 view;
     private Mat4 proj;
 
-    public WiredRenderer(LineRasterizerGraphics lineRasterizer) {
+    public WiredRenderer(LineRasterizer lineRasterizer) {
         this.lineRasterizer = lineRasterizer;
         this.view = new Mat4Identity();
     }

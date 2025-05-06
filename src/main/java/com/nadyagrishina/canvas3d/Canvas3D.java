@@ -1,23 +1,19 @@
 package com.nadyagrishina.canvas3d;
 
-import com.nadyagrishina.canvas3d.rasterize.LineRasterizerGraphics;
-import com.nadyagrishina.canvas3d.rasterize.RasterBufferedImage;
+import com.nadyagrishina.canvas3d.rasterize.LineRasterizer;
 import com.nadyagrishina.canvas3d.renderer.WiredRenderer;
 import com.nadyagrishina.canvas3d.solids.*;
 import com.nadyagrishina.canvas3d.transforms.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyAdapter;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.Serial;
 
 public class Canvas3D {
     private final JPanel panel;
-    private final RasterBufferedImage raster;
+    private final BufferedImage raster;
     private final WiredRenderer wiredRenderer;
     private Camera camera = new Camera();
     private Mat4 projectionMatrix;
@@ -77,8 +73,8 @@ public class Canvas3D {
         frame.setResizable(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        raster = new RasterBufferedImage(width, height);
-        LineRasterizerGraphics lineRasterizer = new LineRasterizerGraphics(raster);
+        raster = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        LineRasterizer lineRasterizer = new LineRasterizer(raster);
         wiredRenderer = new WiredRenderer(lineRasterizer);
 
         panel = new JPanel() {
@@ -302,13 +298,17 @@ public class Canvas3D {
 
         panel.repaint();
     }
+
     private void clear() {
-        raster.setClearColor(0x000000);
-        raster.clear();
+        final Graphics gc = raster.getGraphics();
+        gc.setColor(Color.BLACK);
+        gc.clearRect(0, 0, raster.getWidth(), raster.getHeight());
     }
+
     private void present(Graphics graphics) {
-        raster.repaint(graphics);
+        graphics.drawImage(raster, 0, 0, null);
     }
+
     private double calculateScaleFactor(int mouseX, int mouseY) {
         return (1.0 + (2.0 * (oldY - mouseY) / panel.getHeight()))
                 * (1.0 - (2.0 * (oldX - mouseX) / panel.getWidth()));
