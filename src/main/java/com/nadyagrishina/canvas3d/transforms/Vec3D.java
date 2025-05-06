@@ -1,6 +1,7 @@
 package com.nadyagrishina.canvas3d.transforms;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -12,9 +13,10 @@ import java.util.Optional;
  * @author PGRF FIM UHK 
  * @version 2016
  */
+@Getter
 @EqualsAndHashCode
 public class Vec3D {
-	private final double x, y, z;
+    private final double x, y, z;
 
 	/**
 	 * Creates a zero vector
@@ -90,34 +92,7 @@ public class Vec3D {
 		z = array[2];
 	}
 
-	/**
-	 * Returns the x coordinate
-	 * 
-	 * @return the x
-	 */
-	public double getX() {
-		return x;
-	}
-
-	/**
-	 * Returns the y coordinate
-	 * 
-	 * @return the y
-	 */
-	public double getY() {
-		return y;
-	}
-
-	/**
-	 * Returns the z coordinate
-	 * 
-	 * @return the z
-	 */
-	public double getZ() {
-		return z;
-	}
-
-	/**
+    /**
 	 * Returns a clone of this vector with the x coordinate replaced by the
 	 * given value
 	 * 
