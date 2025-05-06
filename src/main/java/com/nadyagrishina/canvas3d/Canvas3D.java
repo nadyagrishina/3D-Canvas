@@ -3,6 +3,7 @@ package com.nadyagrishina.canvas3d;
 import com.nadyagrishina.canvas3d.renderer.WiredRenderer;
 import com.nadyagrishina.canvas3d.solids.*;
 import com.nadyagrishina.canvas3d.transforms.*;
+import lombok.Setter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +26,7 @@ public class Canvas3D extends JPanel {
     private double deltaY;
     private Solid pyramid;
     private Solid octahedron;
-    private Solid activeSolid;
+    @Setter private Solid activeSolid;
     private Solid ferguson;
     private Solid bezier;
     private Solid coons;
@@ -269,9 +270,7 @@ public class Canvas3D extends JPanel {
 
         return rotYMatrix.mul(rotZMatrix);
     }
-    public void setActiveSolid(Solid solid) {
-        activeSolid = solid;
-    }
+
     private void checkSelection() {
         isBothSelected = isPyramidSelected && isOctahedronSelected;
     }
