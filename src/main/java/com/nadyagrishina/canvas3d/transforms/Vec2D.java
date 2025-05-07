@@ -1,7 +1,9 @@
 package com.nadyagrishina.canvas3d.transforms;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -11,10 +13,10 @@ import java.util.Optional;
  * @author PGRF FIM UHK
  * @version 2016
  */
-
-
+@Getter
+@EqualsAndHashCode
 public class Vec2D {
-	private final double x, y;
+    private final double x, y;
 
 	/**
 	 * Creates a zero vector
@@ -57,27 +59,9 @@ public class Vec2D {
 		x = v.x;
 		y = v.y;
 	}
-	
 
-	/**
-	 * Returns the x coordinate
-	 * 
-	 * @return the x
-	 */
-	public double getX() {
-		return x;
-	}
 
-	/**
-	 * Returns the y coordinate
-	 * 
-	 * @return the y
-	 */
-	public double getY() {
-		return y;
-	}
-
-	/**
+    /**
 	 * Returns a clone of this vector with the x coordinate replaced by the
 	 * given value
 	 * 
@@ -187,31 +171,6 @@ public class Vec2D {
 	 */
 	public double length() {
 		return Math.sqrt(x * x + y * y);
-	}
-
-	/**
-	 * Compares this object against the specified object.
-	 * 
-	 * @param obj
-	 *            the object to compare with.
-	 * @return {@code true} if the objects are the same; {@code false}
-	 *         otherwise.
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		return (this == obj) || (obj != null) && (obj instanceof Vec2D) 
-				&& (new Double(((Vec2D) obj).getX()).equals(getX()))
-				&& (new Double(((Vec2D) obj).getY()).equals(getY()));
-	}
-
-	/**
-	 * Returns a hash code value for the object.
-	 * 
-	 * @return a hash code value for this object.
-	 */
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getX(), this.getY());
 	}
 
 	/**

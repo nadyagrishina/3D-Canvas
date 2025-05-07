@@ -1,6 +1,5 @@
 package com.nadyagrishina.canvas3d.renderer;
 
-import com.nadyagrishina.canvas3d.rasterize.LineRasterizer;
 import com.nadyagrishina.canvas3d.solids.ColoredAxes;
 import com.nadyagrishina.canvas3d.solids.Solid;
 import com.nadyagrishina.canvas3d.transforms.Mat4;
@@ -11,15 +10,13 @@ import com.nadyagrishina.canvas3d.transforms.Vec3D;
 import java.awt.*;
 
 public class WiredRenderer {
-    private final LineRasterizer lineRasterizer;
     private Mat4 view;
     private Mat4 proj;
 
-    public WiredRenderer(LineRasterizer lineRasterizer) {
-        this.lineRasterizer = lineRasterizer;
+    public WiredRenderer() {
         this.view = new Mat4Identity();
     }
-    public void render(Solid solid, Color color) {
+    public void render(final Graphics2D gc, Solid solid, Color color) {
         // Solid má index buffer, projdu ho v cyklu
         // pro každé dva prvky si načtu odpovídající vertex
         // spojím vertexy linou
@@ -51,10 +48,12 @@ public class WiredRenderer {
             v2 = transformToWindow(v2);
 
             //Rasterization
-            lineRasterizer.rasterize(
-                    (int)Math.round(v1.getX()), (int)Math.round(v1.getY()),
-                    (int)Math.round(v2.getX()), (int)Math.round(v2.getY()),
-                    color);
+            gc.setStroke(new BasicStroke(2));
+            gc.setColor(color);
+            gc.drawLine(
+                (int)Math.round(v1.getX()), (int)Math.round(v1.getY()),
+                (int)Math.round(v2.getX()), (int)Math.round(v2.getY())
+            );
         }
     }
     private boolean clipLine(Point3D a, Point3D b) {
@@ -89,12 +88,11 @@ public class WiredRenderer {
     public void setProj(Mat4 proj) {
         this.proj = proj;
     }
-    public void renderAxes() {
+    public void renderAxes(final Graphics2D gc) {
         ColoredAxes coloredAxes = new ColoredAxes(this);
-        coloredAxes.render();
+        coloredAxes.render(gc);
     }
-    public void renderLine(Point3D start, Point3D end, Color color) {
-
+    public void renderLine(final Graphics2D gc, Point3D start, Point3D end, Color color) {
         start = start.mul(view).mul(proj);
         end = end.mul(view).mul(proj);
 
@@ -111,11 +109,12 @@ public class WiredRenderer {
         v1 = transformToWindow(v1);
         v2 = transformToWindow(v2);
 
-        lineRasterizer.rasterize(
-                (int) Math.round(v1.getX()), (int) Math.round(v1.getY()),
-                (int) Math.round(v2.getX()), (int) Math.round(v2.getY()),
-                color);
-
+        gc.setStroke(new BasicStroke(2));
+        gc.setColor(color);
+        gc.drawLine(
+            (int) Math.round(v1.getX()), (int) Math.round(v1.getY()),
+            (int) Math.round(v2.getX()), (int) Math.round(v2.getY())
+        );
     }
 }
 
