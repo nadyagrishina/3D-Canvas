@@ -63,3 +63,8 @@ This project is perfect for exploring 3D graphics, computer vision, and user int
 3. Run the `Driver` class
 
 4. Make sure you have Java 21 installed
+
+## 📚 Educational Attribution  
+This project was developed as part of coursework at the University of Hradec Králové (UHK).  
+It uses a base structure and some foundational classes provided by the Faculty of Informatics and Management for educational purposes.  
+All additional code, logic, and extensions were implemented by the author.
